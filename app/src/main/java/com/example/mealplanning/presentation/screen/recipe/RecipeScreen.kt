@@ -1,5 +1,6 @@
 package com.example.mealplanning.presentation.screen.recipe
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -21,13 +22,13 @@ fun RecipeScreen(
             factory.create(recipeId)
         }
     ),
-    onFinished: () -> Unit,
+//    onFinished: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
     when (state) {
         RecipeViewModel.RecipeState.Finished -> {
             LaunchedEffect(key1 = Unit) {
-                onFinished()
+//                onFinished()
             }
         }
 
@@ -47,8 +48,9 @@ fun RecipeScreen(
                     item {
                         (state as RecipeViewModel.RecipeState.ShowingRecipe).recipeInformation  //проверить почему требуется доп проверка AS
                         val recipeInf = (state as RecipeViewModel.RecipeState.ShowingRecipe).recipeInformation
+                        Log.d("RecipeScreen","https://img.spoonacular.com/recipes/${recipeInf.imageUrl}")
                         AsyncImage(
-                            model = "https://img.spoonacular.com/recipes/${recipeInf.imageUrl}",
+                            model = recipeInf.imageUrl,
                             contentDescription = null
                         )
                     }

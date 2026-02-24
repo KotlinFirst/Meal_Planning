@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             _root_ide_package_.com.example.mealplanning.presentation.ui.theme.MealPlanningTheme {
-                RecipeScreen(recipeId = 716429) { }
+                RecipeScreen(recipeId = 716429)
             }
         }
     }
