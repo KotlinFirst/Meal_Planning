@@ -41,7 +41,6 @@ fun MealPlanDbModel.toEntity(): MealPlan {
         readyInMinutes = readyInMinutes,
         servings = servings
     )
-
 }
 
 fun RecipeResponseDto.toIngredientWithRecipe(): IngredientWithRecipe {

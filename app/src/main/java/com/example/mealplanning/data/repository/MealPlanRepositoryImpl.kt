@@ -3,8 +3,11 @@ package com.example.mealplanning.data.repository
 import android.util.Log
 import com.example.mealplanning.data.local.MealPlanDao
 import com.example.mealplanning.data.local.MealPlanDbModel
+import com.example.mealplanning.data.local.recipe.IngredientDbModel
+import com.example.mealplanning.data.local.recipe.IngredientWithRecipe
 import com.example.mealplanning.data.local.recipe.RecipeDbModel
 import com.example.mealplanning.data.mapper.toEntity
+import com.example.mealplanning.data.mapper.toIngredientWithRecipe
 import com.example.mealplanning.data.mapper.toMealPlanDbModel
 import com.example.mealplanning.data.mapper.toRecipeDbModel
 import com.example.mealplanning.data.remote.MealPlanApiService
@@ -14,6 +17,7 @@ import com.example.mealplanning.domain.repository.MealPlanRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlin.collections.emptyList
 
 class MealPlanRepositoryImpl @Inject constructor(
     private val mealPlanDao: MealPlanDao,
@@ -50,26 +54,29 @@ class MealPlanRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private suspend fun loadRecipe(recipeId: Int): RecipeDbModel {
+    private suspend fun loadRecipe(recipeId: Int): IngredientWithRecipe {
         return try {
-            mealPlanApiService.loadRecipe(recipeId).toRecipeDbModel()
+            mealPlanApiService.loadRecipe(recipeId).toIngredientWithRecipe()
         } catch (e: Exception) {
             if (e is CancellationException) {
                 throw e
             }
-            RecipeDbModel(
-                recipeId = 0,
-                title = "Ошибка загрузки",
-                imageUrl = "",
-                servings = 0,
-                readyInMinutes = 0,
-                cookingMinutes = 0
+            IngredientWithRecipe(
+
+                recipe = RecipeDbModel(
+                    recipeId = 0,
+                    title = "Ошибка загрузки",
+                    imageUrl = "",
+                    servings = 0,
+                    readyInMinutes = 0,
+                    cookingMinutes = 0
+                )
             )
         }
     }
 
     override suspend fun getRecipeInformation(recipeId: Int): RecipeInformation {
-        return loadRecipe(recipeId)
+        return loadRecipe(recipeId).toEntity()
     }
 
     override suspend fun saveMealPlan(id: Int) {
