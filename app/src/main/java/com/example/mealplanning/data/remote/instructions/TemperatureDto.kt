@@ -5,9 +5,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Length(
+data class TemperatureDto(
     @SerialName("number")
-    val number: Int = 0,
+    val number: Double = 0.0,
     @SerialName("unit")
     val unit: String = ""
 )

@@ -9,5 +9,5 @@ data class InstructionsDtoItem(
     @SerialName("name")
     val name: String = "",
     @SerialName("steps")
-    val steps: List<Step> = listOf()
+    val steps: List<StepDto> = listOf()
 )

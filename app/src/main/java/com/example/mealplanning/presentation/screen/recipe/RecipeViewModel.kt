@@ -1,8 +1,9 @@
 package com.example.mealplanning.presentation.screen.recipe
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mealplanning.domain.entity.RecipeInformation
+import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
 import com.example.mealplanning.domain.usecase.GetRecipeInformationUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = RecipeViewModel.Factory::class) // фабрику создаем, если используем Assisted
 class RecipeViewModel @AssistedInject constructor(
@@ -20,14 +20,17 @@ class RecipeViewModel @AssistedInject constructor(
     @Assisted("recipeId") private val recipeId: Int,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<RecipeState>(RecipeState.Initial)
+    private val _state =
+        MutableStateFlow<RecipeState>(RecipeState.Initial)
     val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
             _state.update {
                 val recipeInformation = getRecipeInformationUseCase(recipeId)
+                Log.d("toIngredientDbModel", "$recipeInformation")
                 RecipeState.ShowingRecipe(recipeInformation)
+
             }
         }
     }

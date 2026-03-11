@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Ingredient(
+data class EquipmentDto(
     @SerialName("id")
     val id: Int = 0,
     @SerialName("image")
@@ -13,5 +13,7 @@ data class Ingredient(
     @SerialName("localizedName")
     val localizedName: String = "",
     @SerialName("name")
-    val name: String = ""
+    val name: String = "",
+    @SerialName("temperature")
+    val temperature: TemperatureDto? = TemperatureDto()
 )

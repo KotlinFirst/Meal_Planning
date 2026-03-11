@@ -3,7 +3,7 @@ package com.example.mealplanning.presentation.screen.milestone
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mealplanning.domain.entity.MealPlan
+import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
 import com.example.mealplanning.domain.usecase.GetMealPlaneUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

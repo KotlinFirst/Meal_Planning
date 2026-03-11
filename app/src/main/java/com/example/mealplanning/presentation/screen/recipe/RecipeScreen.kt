@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,17 +37,20 @@ import coil3.compose.AsyncImage
 import com.example.mealplanning.domain.entity.Ingredient
 import com.example.mealplanning.presentation.navigation.composable.NavBottomBar
 import com.example.mealplanning.presentation.ui.theme.Gray
+import kotlin.Int
+import kotlin.Unit
 
 @Composable
 fun RecipeScreen(
     modifier: Modifier = Modifier,
     recipeId: Int,
     viewModel: RecipeViewModel = hiltViewModel(     //передаем, если у VM есть Assisted
-        creationCallback = { factory: RecipeViewModel.Factory ->    //принимает фабрику VM,возвращает саму VM (VMF) -(VM)
+        creationCallback = { factory: RecipeViewModel.Factory ->    //принимает фабрику VMF,возвращает саму VM (VMF) -(VM)
             factory.create(recipeId)
         }
     ),
 //    onFinished: () -> Unit,
+    onButtonClick: (Int) -> Unit,
 ) {
     val state = viewModel.state.collectAsState()
     val currentState = state.value
@@ -70,8 +74,6 @@ fun RecipeScreen(
                         .fillMaxSize()
                         .padding(innerPadding),
                 ) {
-
-                    currentState.recipeInformation
                     val recipeInf = currentState.recipeInformation
                     Log.d(
                         "RecipeScreen",
@@ -126,11 +128,24 @@ fun RecipeScreen(
                                 )
                                 HorizontalDivider()
                                 Spacer(Modifier.height(32.dp))
-                                LazyColumn {
-                                    items(items = currentState.recipeInformation.ingredients,
-                                        ){
+                                LazyColumn {item {
+                                    Button(
+                                        modifier = Modifier
+                                            .padding(horizontal = 24.dp)
+                                            .fillMaxWidth(),
+                                        onClick = { onButtonClick(currentState.recipeInformation.recipeId) }
+                                    ) {
+                                        Text(
+                                            text = "Стартуем!"
+                                        )
+                                    }
+                                }
+                                    items(
+                                        items = currentState.recipeInformation.ingredients,
+                                    ) {
                                         TableIngredients(it)
                                     }
+
                                 }
                             }
                         }

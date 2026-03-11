@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ExtendedIngredient(
+data class ExtendedIngredientDto(
     @SerialName("amount")
     val amount: Double = 0.0,
     @SerialName("consistency")

@@ -1,15 +1,21 @@
 package com.example.mealplanning.data.mapper
 
-import com.example.mealplanning.data.local.recipe.IngredientDbModel
+import android.util.Log
 import com.example.mealplanning.data.local.MealPlanDbModel
+import com.example.mealplanning.data.local.recipe.IngredientDbModel
 import com.example.mealplanning.data.local.recipe.IngredientWithRecipe
 import com.example.mealplanning.data.local.recipe.RecipeDbModel
+import com.example.mealplanning.data.remote.instructions.EquipmentDto
+import com.example.mealplanning.data.remote.instructions.IngredientDto
+import com.example.mealplanning.data.remote.instructions.StepDto
 import com.example.mealplanning.data.remote.mealPlan.MealPlanResponseDto
-import com.example.mealplanning.data.remote.recipe.ExtendedIngredient
+import com.example.mealplanning.data.remote.recipe.ExtendedIngredientDto
 import com.example.mealplanning.data.remote.recipe.RecipeResponseDto
 import com.example.mealplanning.domain.entity.Ingredient
-import com.example.mealplanning.domain.entity.MealPlan
-import com.example.mealplanning.domain.entity.RecipeInformation
+import com.example.mealplanning.domain.entity.instructions.Equipment
+import com.example.mealplanning.domain.entity.instructions.Step
+import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
+import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
 
 fun MealPlanResponseDto.toMealPlanDbModel(): List<MealPlanDbModel> {
     return meals.map {
@@ -85,7 +91,7 @@ fun RecipeResponseDto.toDbModels(): Pair<RecipeDbModel, List<IngredientDbModel>>
     return toRecipeDbModel() to toIngredientDbModel()
 }
 
-//fun ExtendedIngredient.toIngredientDbModel(recipeId:Int): IngredientDbModel {
+//fun ExtendedIngredientDto.toIngredientDbModel(recipeId:Int): IngredientDbModel {
 //    return IngredientDbModel(
 //        ingredientId = id,
 //        imageUri = image,
@@ -95,6 +101,7 @@ fun RecipeResponseDto.toDbModels(): Pair<RecipeDbModel, List<IngredientDbModel>>
 //}
 
 fun IngredientWithRecipe.toEntity(): RecipeInformation {
+    Log.d("toIngredientDbModel", "${recipe.recipeId},${ingredients.map { it.ingredientId }}")
     return RecipeInformation(
         recipeId = recipe.recipeId,
         title = recipe.title,
@@ -106,10 +113,11 @@ fun IngredientWithRecipe.toEntity(): RecipeInformation {
     )
 }
 
-fun ExtendedIngredient.toIngredientDbModel(ingredientId: Int): IngredientDbModel {
+fun ExtendedIngredientDto.toIngredientDbModel(recipeId: Int): IngredientDbModel {
+    Log.d("toIngredientDbModel", "${recipeId},${id}")
     return IngredientDbModel(
-        ingredientId = ingredientId,
-        recipeId = id,
+        ingredientId = id,
+        recipeId = recipeId,
         imageUri = image,
         content = original
     )
@@ -120,5 +128,42 @@ fun IngredientDbModel.toEntity(): Ingredient {
         id = ingredientId,
         imageUri = imageUri,
         content = content
+    )
+}
+
+fun IngredientDto.toDbModel(recipeId: Int): IngredientDbModel {
+    return IngredientDbModel(
+        ingredientId = id,
+        recipeId = recipeId,
+        imageUri = image,
+        content = name
+    )
+}
+
+fun IngredientDto.toEntity(): Ingredient {
+    return Ingredient(
+        id = id,
+        imageUri = image,
+        content = name
+    )
+}
+
+fun EquipmentDto.toEntity(): Equipment {
+    return Equipment(
+        id = id,
+        image = image,
+        localizedName = localizedName,
+        name = name,
+        temperature = temperature?.number
+    )
+}
+
+fun StepDto.toEntity(): Step {
+    return Step(
+        equipment = equipment.map { it.toEntity() },
+        ingredients = ingredients.map { it.toEntity() },
+        length = length?.number,
+        number = number,
+        step = step
     )
 }

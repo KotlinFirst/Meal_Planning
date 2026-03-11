@@ -3,21 +3,22 @@ package com.example.mealplanning.data.repository
 import android.util.Log
 import com.example.mealplanning.data.local.MealPlanDao
 import com.example.mealplanning.data.local.MealPlanDbModel
-import com.example.mealplanning.data.local.recipe.IngredientDbModel
 import com.example.mealplanning.data.local.recipe.IngredientWithRecipe
 import com.example.mealplanning.data.local.recipe.RecipeDbModel
+import com.example.mealplanning.data.mapper.toDbModel
 import com.example.mealplanning.data.mapper.toEntity
 import com.example.mealplanning.data.mapper.toIngredientWithRecipe
 import com.example.mealplanning.data.mapper.toMealPlanDbModel
-import com.example.mealplanning.data.mapper.toRecipeDbModel
 import com.example.mealplanning.data.remote.MealPlanApiService
-import com.example.mealplanning.domain.entity.MealPlan
-import com.example.mealplanning.domain.entity.RecipeInformation
+import com.example.mealplanning.data.remote.instructions.InstructionsListDto
+import com.example.mealplanning.data.remote.instructions.StepDto
+import com.example.mealplanning.domain.entity.instructions.Step
+import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
+import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
 import com.example.mealplanning.domain.repository.MealPlanRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import kotlin.collections.emptyList
 
 class MealPlanRepositoryImpl @Inject constructor(
     private val mealPlanDao: MealPlanDao,
@@ -54,6 +55,20 @@ class MealPlanRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    private suspend fun loadInstructions(recipeId: Int): List<List<StepDto>> {
+        return try {
+            Log.d("TEST3", mealPlanApiService.loadInstructions(recipeId).toString())
+            mealPlanApiService.loadInstructions(recipeId).map { it.steps }
+        } catch (e: Exception) {
+            Log.d("TEST3", e.stackTraceToString())
+            if (e is CancellationException) {
+                throw e
+
+            }
+            listOf()
+        }
+    }
+
     private suspend fun loadRecipe(recipeId: Int): IngredientWithRecipe {
         return try {
             mealPlanApiService.loadRecipe(recipeId).toIngredientWithRecipe()
@@ -79,6 +94,13 @@ class MealPlanRepositoryImpl @Inject constructor(
         return loadRecipe(recipeId).toEntity()
     }
 
+    override suspend fun getInstructions(recipeId: Int): List<List<Step>> {
+
+        return loadInstructions(recipeId).map { listStepDto ->
+            listStepDto.map { it.toEntity() }
+        }
+    }
+
     override suspend fun saveMealPlan(id: Int) {
         TODO("Not yet implemented")
     }
@@ -86,4 +108,6 @@ class MealPlanRepositoryImpl @Inject constructor(
     override suspend fun removeMealPlan(id: Int) {
         TODO("Not yet implemented")
     }
+
+
 }

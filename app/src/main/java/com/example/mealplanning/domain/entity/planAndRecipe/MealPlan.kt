@@ -1,4 +1,4 @@
-package com.example.mealplanning.domain.entity
+package com.example.mealplanning.domain.entity.planAndRecipe
 
 data class MealPlan (
     val id: Int,

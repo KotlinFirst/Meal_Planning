@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mealplanning.presentation.screen.instructions.InstructionsScreen
 import com.example.mealplanning.presentation.screen.milestone.SearchMealPlanScreen
 import com.example.mealplanning.presentation.screen.recipe.RecipeScreen
+import java.net.IDN
 
 @Composable
 fun NavGraph() {
@@ -19,15 +21,24 @@ fun NavGraph() {
         composable(NavScreen.SearchMealPlanScreen.route) {
             SearchMealPlanScreen(
                 onRecipeClick = {
-                    Log.d("NavGraph","onRecipeClick")
+                    Log.d("NavGraph", "onRecipeClick")
                     navController.navigate(NavScreen.RecipeScreen.createRoute(it.id))
                 }
             )
         }
         composable(NavScreen.RecipeScreen.route) {
             val recipeId = NavScreen.RecipeScreen.getRecipeId(it.arguments)
-            Log.d("NavGraph","Я тут был")
+            Log.d("NavGraph", "Я тут был")
             RecipeScreen(
+                recipeId = recipeId,
+                onButtonClick = { recipeId ->
+                    navController.navigate(NavScreen.InstructionScreen.createRoute(recipeId))
+                }
+            )
+        }
+        composable(NavScreen.InstructionScreen.route) {
+            val recipeId = NavScreen.InstructionScreen.getRecipeId(it.arguments)
+            InstructionsScreen(
                 recipeId = recipeId
             )
         }
@@ -40,6 +51,16 @@ sealed class NavScreen(val route: String) {
     data object RecipeScreen : NavScreen("recipe/{recipe_id}") {
         fun createRoute(recipeId: Int): String {
             return "recipe/$recipeId"
+        }
+
+        fun getRecipeId(arguments: Bundle?): Int {
+            return arguments?.getString("recipe_id")?.toInt() ?: 0
+        }
+    }
+
+    data object InstructionScreen : NavScreen("instructions/{recipe_id}") {
+        fun createRoute(recipeId: Int): String {
+            return "instructions/$recipeId"
         }
 
         fun getRecipeId(arguments: Bundle?): Int {

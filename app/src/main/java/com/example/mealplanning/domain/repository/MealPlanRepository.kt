@@ -1,7 +1,9 @@
 package com.example.mealplanning.domain.repository
 
-import com.example.mealplanning.domain.entity.MealPlan
-import com.example.mealplanning.domain.entity.RecipeInformation
+import com.example.mealplanning.domain.entity.instructions.Instructions
+import com.example.mealplanning.domain.entity.instructions.Step
+import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
+import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
 import kotlinx.coroutines.flow.Flow
 
 interface MealPlanRepository {
@@ -14,4 +16,6 @@ interface MealPlanRepository {
     suspend fun saveMealPlan(id: Int)
 
     suspend fun removeMealPlan(id: Int)
+
+    suspend fun getInstructions(recipeId: Int): List<List<Step>>
 }
