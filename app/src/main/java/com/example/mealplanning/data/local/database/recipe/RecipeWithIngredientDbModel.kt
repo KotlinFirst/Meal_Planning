@@ -1,12 +1,12 @@
-package com.example.mealplanning.data.local.recipe
+package com.example.mealplanning.data.local.database.recipe
 
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class IngredientWithRecipe(
+data class RecipeWithIngredientDbModel(
     @Embedded val recipe: RecipeDbModel,
     @Relation(
-        parentColumn = "id",
+        parentColumn = "recipeId",
         entityColumn = "recipeId"
     )
     val ingredients: List<IngredientDbModel> = listOf()

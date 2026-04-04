@@ -27,19 +27,24 @@ class InstructionsViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            Log.d("VM",recipeId.toString())
-            val instructions = getInstructionsUseCase(recipeId)
-            Log.d("VM",instructions.toString())
-            _state.update {
+            getInstructionsUseCase(recipeId).takeIf { it.isNotEmpty() }?.also { instructions ->
+                _state.update {
                     InstructionsState.ShowingRecipe(instructions)
+                }
             }
         }
+//        viewModelScope.launch {
+//            _state.update {
+//                val instructions = getInstructionsUseCase(recipeId)
+//                    InstructionsState.ShowingRecipe(instructions)
+//            }
+//        }
     }
 
     sealed interface InstructionsState {
         data object Initial : InstructionsState
         data class ShowingRecipe(
-            val instructions: List<List<Step>>
+            val instructions: List<List<Step>>,
         ) : InstructionsState
 
         data object Finished : InstructionsState

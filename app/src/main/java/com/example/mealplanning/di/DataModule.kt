@@ -2,11 +2,13 @@ package com.example.mealplanning.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.mealplanning.data.local.MealPlanDao
-import com.example.mealplanning.data.local.AppDatabase
+import com.example.mealplanning.data.local.database.MealPlanDao
+import com.example.mealplanning.data.local.database.AppDatabase
 import com.example.mealplanning.data.remote.MealPlanApiService
 import com.example.mealplanning.data.repository.MealPlanRepositoryImpl
+import com.example.mealplanning.data.repository.PreferencesRepositoryImpl
 import com.example.mealplanning.domain.repository.MealPlanRepository
+import com.example.mealplanning.domain.repository.PreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -29,6 +31,9 @@ interface DataModule {
 @Binds
 fun bindMealPlanRepository(impl: MealPlanRepositoryImpl): MealPlanRepository
 
+@Singleton
+@Binds
+fun bindPreferenceRepository(impl: PreferencesRepositoryImpl): PreferencesRepository
 
     companion object {
 
@@ -91,7 +96,5 @@ fun bindMealPlanRepository(impl: MealPlanRepositoryImpl): MealPlanRepository
         ): MealPlanDao {
             return database.mealPlanDao()
         }
-
     }
-
 }

@@ -1,6 +1,6 @@
-package com.example.mealplanning.data.local.instructions
+package com.example.mealplanning.data.local.database.instructions
 
-import com.example.mealplanning.data.local.recipe.IngredientDbModel
+import com.example.mealplanning.data.local.database.recipe.IngredientDbModel
 
 data class StepDbModel(
     val equipment:List<EquipmentDbModel>,
@@ -8,5 +8,4 @@ data class StepDbModel(
     val length: Int?,
     val number: Int,
     val step: String
-
 )

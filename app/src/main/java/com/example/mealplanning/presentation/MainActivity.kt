@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.mealplanning.data.remote.MealPlanApiService
 import com.example.mealplanning.presentation.navigation.NavGraph
-import com.example.mealplanning.presentation.screen.instructions.InstructionsScreen
+import com.example.mealplanning.presentation.screen.recipe.RecipeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,8 +21,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             _root_ide_package_.com.example.mealplanning.presentation.ui.theme.MealPlanningTheme {
+                RecipeScreen(recipeId = 716429, onButtonClick = {})
 //                NavGraph()
-                InstructionsScreen(recipeId = 324694)
+//                InstructionsScreen(recipeId = 324694)
             }
         }
     }

@@ -8,6 +8,6 @@ class GetRecipeInformationUseCase @Inject constructor(
     private val mealPlanRepository: MealPlanRepository,
 ) {
     suspend operator fun invoke(recipeId:Int) =
-        mealPlanRepository.getRecipeInformation(recipeId).also{Log.d("toIngredientDbModel","${recipeId},${it.recipeId},${it.ingredients.map{it.id}}")}
+        mealPlanRepository.getRecipeInformation(recipeId)
 
 }

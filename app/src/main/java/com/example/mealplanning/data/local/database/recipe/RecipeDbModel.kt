@@ -1,11 +1,11 @@
-package com.example.mealplanning.data.local.recipe
+package com.example.mealplanning.data.local.database.recipe
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.mealplanning.data.local.MealPlanDbModel
+import com.example.mealplanning.data.local.database.MealPlanDbModel
 
 @Entity(
     tableName = "recipe",

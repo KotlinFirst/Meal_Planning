@@ -1,4 +1,4 @@
-package com.example.mealplanning.data.local.instructions
+package com.example.mealplanning.data.local.database.instructions
 
 data class InstructionsDbModel(
     val steps:List<StepDbModel>,

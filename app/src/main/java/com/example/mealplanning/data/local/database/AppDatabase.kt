@@ -1,12 +1,13 @@
-package com.example.mealplanning.data.local
+package com.example.mealplanning.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.mealplanning.data.local.recipe.RecipeDbModel
+import com.example.mealplanning.data.local.database.recipe.IngredientDbModel
+import com.example.mealplanning.data.local.database.recipe.RecipeDbModel
 
 @Database(
-    entities = [MealPlanDbModel::class, RecipeDbModel::class],
-    version = 1,
+    entities = [MealPlanDbModel::class, RecipeDbModel::class, IngredientDbModel::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
