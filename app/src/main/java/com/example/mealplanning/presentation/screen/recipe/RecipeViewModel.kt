@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
+import com.example.mealplanning.domain.usecase.DeleteFullRecipeUseCase
+import com.example.mealplanning.domain.usecase.GetButtonStateUseCase
+import com.example.mealplanning.domain.usecase.GetInstructionsUseCase
 import com.example.mealplanning.domain.usecase.GetRecipeInformationUseCase
 import com.example.mealplanning.domain.usecase.SaveMealPlanUseCase
 import com.example.mealplanning.domain.usecase.SetButtonStateUseCase
@@ -13,15 +16,18 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 @HiltViewModel(assistedFactory = RecipeViewModel.Factory::class) // фабрику создаем, если используем Assisted
 class RecipeViewModel @AssistedInject constructor(
     private val getRecipeInformationUseCase: GetRecipeInformationUseCase,
     private val setButtonStateUseCase: SetButtonStateUseCase,
+    private val getButtonStateUseCase: GetButtonStateUseCase,
     private val saveMealPlanUseCase: SaveMealPlanUseCase,
+    private val getInstructionsUseCase: GetInstructionsUseCase,
+    private val deleteFullRecipeUseCase: DeleteFullRecipeUseCase,
     @Assisted("recipeId") private val recipeId: Int,
 ) : ViewModel() {
 
@@ -29,26 +35,44 @@ class RecipeViewModel @AssistedInject constructor(
         MutableStateFlow<RecipeState>(RecipeState.Initial)
     val state = _state.asStateFlow()
 
-    init {
+    private val _saveToggleState = MutableStateFlow(false)
+    val saveToggleState = _saveToggleState.asStateFlow()
+
+    fun loadRecipe() {
         viewModelScope.launch {
             _state.update {
                 val recipeInformation = getRecipeInformationUseCase(recipeId)
                 RecipeState.ShowingRecipe(recipeInformation)
             }
+            _saveToggleState.value = getButtonStateUseCase().first()
         }
     }
 
     fun processCommand(command: RecipeInformationCommand) {
         when (command) {
-            is RecipeInformationCommand.IsSelectedButton -> {
+            is RecipeInformationCommand.IsSelectedSaveRecipeButton -> {
                 viewModelScope.launch {
-                    setButtonStateUseCase(true)
-                    val currentState = state.value
-                    if (currentState is RecipeState.ShowingRecipe) {
-                        saveMealPlanUseCase(
-                            recipe = currentState.recipeInformation,
-                            listIngredient =
-                        )
+                    when (command.isSelected) {
+                        true -> {
+                            Log.d("processCommand","command_TRUE")
+                            setButtonStateUseCase(true)
+                            val currentState = state.value
+                            if (currentState is RecipeState.ShowingRecipe) {
+                                val listsStep = getInstructionsUseCase(command.recipeId)
+                                Log.d("VM","$listsStep, ID${command.recipeId}")
+                                saveMealPlanUseCase(
+                                    recipe = currentState.recipeInformation,
+                                    listsStep = listsStep
+                                )
+                            }
+                            _saveToggleState.update { true }
+                        }
+                        false -> {
+                            Log.d("processCommand","command_FALSE")
+                            setButtonStateUseCase(false)
+                            deleteFullRecipeUseCase(command.recipeId)
+                            _saveToggleState.update { false }
+                        }
                     }
                 }
             }
@@ -56,7 +80,8 @@ class RecipeViewModel @AssistedInject constructor(
     }
 
     sealed interface RecipeInformationCommand {
-        data class IsSelectedButton(val recipeId: Int) : RecipeInformationCommand
+        data class IsSelectedSaveRecipeButton(val recipeId: Int, val isSelected: Boolean):
+            RecipeInformationCommand
     }
 
     sealed interface RecipeState {

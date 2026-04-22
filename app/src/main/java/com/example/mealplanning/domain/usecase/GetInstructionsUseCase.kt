@@ -1,6 +1,5 @@
 package com.example.mealplanning.domain.usecase
 
-import android.util.Log
 import com.example.mealplanning.domain.repository.MealPlanRepository
 import javax.inject.Inject
 

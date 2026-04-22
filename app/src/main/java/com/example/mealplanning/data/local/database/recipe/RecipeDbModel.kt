@@ -1,22 +1,19 @@
 package com.example.mealplanning.data.local.database.recipe
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.mealplanning.data.local.database.MealPlanDbModel
 
 @Entity(
     tableName = "recipe",
-    foreignKeys = [
-        ForeignKey(
-            entity = MealPlanDbModel::class,
-            parentColumns = ["id"],
-            childColumns = ["recipeId"],
-            onDelete = CASCADE
-        )
-    ],
+//    foreignKeys = [
+//        ForeignKey(
+//            entity = MealPlanDbModel::class,
+//            parentColumns = ["id"],
+//            childColumns = ["recipeId"],
+//            onDelete = CASCADE
+//        )
+//    ],
     indices = [Index("recipeId")]
 )
 data class RecipeDbModel(
@@ -27,5 +24,5 @@ data class RecipeDbModel(
     val servings: Int,
     val readyInMinutes: Int,
     val cookingMinutes: Int,
-//    val ingredients: List<IngredientDbModel>, // этот класс тоже нужно в таблицу
+//    val ingredients: List<RecipeIngredientDbModel>, // этот класс тоже нужно в таблицу
 )

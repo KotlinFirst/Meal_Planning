@@ -65,7 +65,7 @@ fun InstructionsScreen(
             Scaffold(
                 modifier = modifier
                     .fillMaxSize(),
-                bottomBar = { NavBottomBar() }
+//                bottomBar = { NavBottomBar() }
             ) { innerPadding ->
                 val instructions = currentState.instructions
                 var sumSteps = 0

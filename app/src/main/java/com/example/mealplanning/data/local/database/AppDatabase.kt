@@ -2,15 +2,24 @@ package com.example.mealplanning.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.mealplanning.data.local.database.recipe.IngredientDbModel
+import com.example.mealplanning.data.local.database.instructions.EquipmentDbModel
+import com.example.mealplanning.data.local.database.instructions.InstructionIngredientDbModel
+import com.example.mealplanning.data.local.database.instructions.StepDbModel
+import com.example.mealplanning.data.local.database.recipe.RecipeIngredientDbModel
 import com.example.mealplanning.data.local.database.recipe.RecipeDbModel
 
 @Database(
-    entities = [MealPlanDbModel::class, RecipeDbModel::class, IngredientDbModel::class],
-    version = 2,
+    entities = [
+//        MealPlanDbModel::class,
+        RecipeDbModel::class,
+        RecipeIngredientDbModel::class,
+        InstructionIngredientDbModel::class,
+        EquipmentDbModel::class,
+        StepDbModel::class],
+    version = 4,
     exportSchema = false
 )
-abstract class AppDatabase: RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
 
     abstract fun mealPlanDao(): MealPlanDao
 

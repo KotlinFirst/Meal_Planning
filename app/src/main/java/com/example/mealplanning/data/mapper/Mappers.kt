@@ -2,7 +2,11 @@ package com.example.mealplanning.data.mapper
 
 import android.util.Log
 import com.example.mealplanning.data.local.database.MealPlanDbModel
-import com.example.mealplanning.data.local.database.recipe.IngredientDbModel
+import com.example.mealplanning.data.local.database.instructions.EquipmentDbModel
+import com.example.mealplanning.data.local.database.instructions.InstructionIngredientDbModel
+import com.example.mealplanning.data.local.database.instructions.InstructionWithDetailsDbModel
+import com.example.mealplanning.data.local.database.instructions.StepDbModel
+import com.example.mealplanning.data.local.database.recipe.RecipeIngredientDbModel
 import com.example.mealplanning.data.local.database.recipe.RecipeWithIngredientDbModel
 import com.example.mealplanning.data.local.database.recipe.RecipeDbModel
 import com.example.mealplanning.data.remote.instructions.EquipmentDto
@@ -30,13 +34,14 @@ fun MealPlanResponseDto.toEntity(): List<MealPlan> {
     }
 }
 
-fun StepDto.toEntity(): Step {
+fun StepDto.toEntity(id: Int): Step {
     return Step(
         equipment = equipment.map { it.toEntity() },
         ingredients = ingredients.map { it.toEntity() },
         length = length?.number,
         number = number,
-        step = step
+        step = step,
+        recipeId = id
     )
 }
 
@@ -58,7 +63,7 @@ fun IngredientDto.toEntity(): Ingredient {
     )
 }
 
-fun RecipeResponseDto.toEntity(): RecipeInformation{
+fun RecipeResponseDto.toEntity(): RecipeInformation {
     return RecipeInformation(
         recipeId = id,
         title = title,
@@ -70,7 +75,7 @@ fun RecipeResponseDto.toEntity(): RecipeInformation{
     )
 }
 
-fun ExtendedIngredientDto.toEntity():Ingredient{
+fun ExtendedIngredientDto.toEntity(): Ingredient {
     return Ingredient(
         id = id,
         imageUri = image,
@@ -88,7 +93,8 @@ fun MealPlan.toMealPlanDbModel(): MealPlanDbModel {
         title = title
     )
 }
-fun RecipeInformation.toRecipeDbModel():RecipeDbModel{
+
+fun RecipeInformation.toRecipeDbModel(): RecipeDbModel {
     return RecipeDbModel(
         recipeId = recipeId,
         title = title,
@@ -99,13 +105,59 @@ fun RecipeInformation.toRecipeDbModel():RecipeDbModel{
     )
 }
 
-fun Ingredient.toIngredientDbModel(recipeId: Int):IngredientDbModel{
-    return IngredientDbModel(
+fun Ingredient.toRecipeIngredientDbModel(recipeId: Int): RecipeIngredientDbModel {
+    return RecipeIngredientDbModel(
         ingredientId = id,
         recipeId = recipeId,
         imageUri = imageUri,
         content = content
     )
+}
+
+fun Equipment.toEquipmentDbModel(recipeId: Int): EquipmentDbModel {
+    return EquipmentDbModel(
+        equipmentId = id,
+        recipeId = recipeId,
+        image = image,
+        localizedName = localizedName,
+        name = name,
+        temperature = temperature?.toInt() ?: 0
+    )
+}
+
+fun Ingredient.toInstructionIngredientDbModel(recipeId: Int): InstructionIngredientDbModel {
+    return InstructionIngredientDbModel(
+        ingredientId = id,
+        recipeId = recipeId,
+        imageUri = imageUri,
+        content = content
+    )
+}
+
+fun List<Step>.toInstructionWithDetailsDbModel(recipeId: Int): List<InstructionWithDetailsDbModel> {
+    return mapIndexed { index, step ->
+        InstructionWithDetailsDbModel(
+            step = StepDbModel(
+                recipeId = recipeId,
+                instructionsId = step.recipeId,
+                length = step.length,
+                number = step.number,
+                step = step.step
+            ),
+            equipment = step.equipment.map { it.toEquipmentDbModel(recipeId) },
+            ingredients = step.ingredients.map { it.toInstructionIngredientDbModel(recipeId) }
+        )
+    }
+}
+
+fun Step.toStepDbModel(instructionsId: Int): StepDbModel {
+return StepDbModel(
+    recipeId = recipeId,
+    instructionsId = instructionsId,
+    length = length,
+    number = number,
+    step = step
+)
 }
 
 
@@ -120,7 +172,7 @@ fun MealPlanDbModel.toEntity(): MealPlan {
     )
 }
 
-fun IngredientDbModel.toEntity(): Ingredient {
+fun RecipeIngredientDbModel.toEntity(): Ingredient {
     return Ingredient(
         id = ingredientId,
         imageUri = imageUri,
@@ -151,13 +203,13 @@ fun RecipeResponseDto.toIngredientWithRecipeDbModel(): RecipeWithIngredientDbMod
             readyInMinutes = readyInMinutes,
             cookingMinutes = cookingMinutes
         ),
-        ingredients = extendedIngredients.map { it.toIngredientDbModel(this.id) }
+        ingredients = extendedIngredients.map { it.toRecipeIngredientDbModel(this.id) }
     )
 }
 
-fun ExtendedIngredientDto.toIngredientDbModel(recipeId: Int): IngredientDbModel {
+fun ExtendedIngredientDto.toRecipeIngredientDbModel(recipeId: Int): RecipeIngredientDbModel {
     Log.d("toIngredientDbModel", "${recipeId},${id}")
-    return IngredientDbModel(
+    return RecipeIngredientDbModel(
         ingredientId = id,
         recipeId = recipeId,
         imageUri = image,

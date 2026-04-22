@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface MealPlanRepository {
     suspend fun getOrUpdateMealPlan(timeFrame: String, targetCalories: Int): List<MealPlan>
 
-    fun showSavedMealPlan(): Flow<List<MealPlan>>
+//    fun showSavedMealPlan(): Flow<List<MealPlan>>
 
     suspend fun getRecipeInformation(recipeId: Int): RecipeInformation
 
@@ -24,6 +24,9 @@ interface MealPlanRepository {
         recipe: RecipeInformation,
         listIngredient: List<Ingredient>,
     )
+    suspend fun deleteMealById(recipeId:Int)
 
     suspend fun getInstructions(recipeId: Int): List<List<Step>>
+
+    suspend fun getAllFavoriteRecipe():List<RecipeInformation>
 }

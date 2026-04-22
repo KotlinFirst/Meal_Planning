@@ -3,6 +3,7 @@ package com.example.mealplanning.presentation.screen.recipe
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -65,8 +66,15 @@ fun RecipeScreen(
 //    onFinished: () -> Unit,
     onButtonClick: (Int) -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.loadRecipe()
+    }
+
     val state = viewModel.state.collectAsState()
     val currentState = state.value
+    val saveToggleState = viewModel.saveToggleState.collectAsState().value
+
+
     when (currentState) {
         RecipeViewModel.RecipeState.Finished -> {
             LaunchedEffect(key1 = Unit) {
@@ -79,7 +87,7 @@ fun RecipeScreen(
         is RecipeViewModel.RecipeState.ShowingRecipe -> {
             Scaffold(
                 modifier = modifier,
-                bottomBar = { NavBottomBar() }
+//                bottomBar = { NavBottomBar() }
             ) { innerPadding ->
                 Box(
                     Modifier
@@ -158,7 +166,18 @@ fun RecipeScreen(
                     ) {
                         Text(text = "Стартуем!")
                     }
-                    ToggleButton(modifier = Modifier.align(Alignment.BottomEnd))
+                    ToggleButton(
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        isSelected = saveToggleState,
+                        onSaveRecipeButton = {
+                            viewModel.processCommand(
+                                RecipeViewModel.RecipeInformationCommand.IsSelectedSaveRecipeButton(
+                                    recipeId = currentState.recipeInformation.recipeId,
+                                    isSelected = it
+                                )
+                            )
+                        },
+                    )
 //                    ToggleButton(
 //                        modifier = Modifier
 //                            .align(Alignment.BottomEnd),
@@ -215,15 +234,15 @@ fun TableIngredients(
 @Composable
 fun ToggleButton(
     modifier: Modifier,
-    iconOn: ImageVector= Icons.Filled.Favorite,
-    iconOff: ImageVector= Icons.Outlined.FavoriteBorder,
-    tintOn: Color= MaterialTheme.colorScheme.secondary,
-    tintOff: Color= MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
-    sizeIsSelected: Dp= 32.dp,
-    sizeNotSelected: Dp= 24.dp,
-
+    iconOn: ImageVector = Icons.Filled.Favorite,
+    iconOff: ImageVector = Icons.Outlined.FavoriteBorder,
+    tintOn: Color = MaterialTheme.colorScheme.secondary,
+    tintOff: Color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
+    sizeIsSelected: Dp = 32.dp,
+    sizeNotSelected: Dp = 24.dp,
+    isSelected: Boolean,
+    onSaveRecipeButton: (Boolean) -> Unit,
 ) {
-    var isSelected by remember { mutableStateOf(false) }
 
     val tint by animateColorAsState(
         targetValue = if (isSelected) tintOn else tintOff,
@@ -237,7 +256,7 @@ fun ToggleButton(
 
     IconToggleButton(
         checked = isSelected,
-        onCheckedChange = { isSelected = it },
+        onCheckedChange = { onSaveRecipeButton(it) },
         modifier = modifier
     ) {
         Icon(

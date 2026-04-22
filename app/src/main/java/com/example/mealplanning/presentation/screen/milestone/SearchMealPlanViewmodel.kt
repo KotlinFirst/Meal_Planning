@@ -34,7 +34,6 @@ private val getMealPlaneUseCase: GetMealPlaneUseCase
         }
     }
     sealed interface SearchMealPlanCommand{
-
         data object UpdateMealPlan: SearchMealPlanCommand
     }
 

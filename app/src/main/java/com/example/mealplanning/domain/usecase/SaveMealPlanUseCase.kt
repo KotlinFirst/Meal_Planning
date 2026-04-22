@@ -1,6 +1,5 @@
 package com.example.mealplanning.domain.usecase
 
-import com.example.mealplanning.domain.entity.Ingredient
 import com.example.mealplanning.domain.entity.instructions.Step
 import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
 import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation

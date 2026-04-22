@@ -3,9 +3,11 @@ package com.example.mealplanning.data.repository
 import android.util.Log
 import com.example.mealplanning.data.local.database.MealPlanDao
 import com.example.mealplanning.data.mapper.toEntity
-import com.example.mealplanning.data.mapper.toIngredientDbModel
-import com.example.mealplanning.data.mapper.toMealPlanDbModel
+import com.example.mealplanning.data.mapper.toEquipmentDbModel
+import com.example.mealplanning.data.mapper.toInstructionIngredientDbModel
 import com.example.mealplanning.data.mapper.toRecipeDbModel
+import com.example.mealplanning.data.mapper.toRecipeIngredientDbModel
+import com.example.mealplanning.data.mapper.toStepDbModel
 import com.example.mealplanning.data.remote.MealPlanApiService
 import com.example.mealplanning.data.remote.instructions.StepDto
 import com.example.mealplanning.domain.entity.Ingredient
@@ -14,8 +16,6 @@ import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
 import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
 import com.example.mealplanning.domain.repository.MealPlanRepository
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MealPlanRepositoryImpl @Inject constructor(
@@ -48,17 +48,19 @@ class MealPlanRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun showSavedMealPlan(): Flow<List<MealPlan>> {
-        return mealPlanDao.getAllSaveMeal().map { listDbModel ->
-            listDbModel.map { mealPlanDbModel ->
-                mealPlanDbModel.toEntity()
-            }
-        }
-    }
+//    override fun showSavedMealPlan(): Flow<List<MealPlan>> {
+//        return mealPlanDao.getAllSaveMeal().map { listDbModel ->
+//            listDbModel.map { mealPlanDbModel ->
+//                mealPlanDbModel.toEntity()
+//            }
+//        }
+//    }
 
     private suspend fun loadInstructions(recipeId: Int): List<List<StepDto>> {
         return try {
-            mealPlanApiService.loadInstructions(recipeId).map { it.steps }
+            val a = mealPlanApiService.loadInstructions(recipeId).map { it.steps }
+            Log.d("loadInstructions", "$a")
+            a
         } catch (e: Exception) {
             if (e is CancellationException) {
                 throw e
@@ -85,8 +87,15 @@ class MealPlanRepositoryImpl @Inject constructor(
 
     override suspend fun getInstructions(recipeId: Int): List<List<Step>> {
         return loadInstructions(recipeId).map { listStepDto ->
-            listStepDto.map { it.toEntity() }
+            listStepDto.map {
+                Log.d("getInstructions", "$listStepDto")
+                it.toEntity(id = recipeId)
+            }
         }
+    }
+
+    override suspend fun getAllFavoriteRecipe(): List<RecipeInformation> {
+        return mealPlanDao.getAllRecipeWithIngredient().map { it.toEntity() }
     }
 
     override suspend fun saveMealPlan(
@@ -94,14 +103,31 @@ class MealPlanRepositoryImpl @Inject constructor(
         recipe: RecipeInformation,
         listsStep: List<List<Step>>,
     ) {
+        Log.d("IMPL0", "$listsStep")
         mealPlanDao.addFullRecipe(
-//            mealPlan.toMealPlanDbModel(),
-            recipe.toRecipeDbModel(),
-            listsStep.map {
-                it.toIngredientDbModel(recipe.recipeId)
+//            mealPlanDbModel = mealPlan.toMealPlanDbModel(),
+            recipeDbModel = recipe.toRecipeDbModel(),
+            listRecipeIngredientDbModel = recipe.ingredients.map {
+                Log.d("IMPL1", "$it")
+                it.toRecipeIngredientDbModel(recipe.recipeId)
+            },
+            listsInstructionIngredientDbModel = listsStep.map { listStep ->
+                listStep.map { step ->
+                    step.ingredients.map { it.toInstructionIngredientDbModel(step.recipeId) }
+                }
+            },
+            listEquipmentDbModel = listsStep.map { listStep ->
+                listStep.map { step -> step.equipment.map { it.toEquipmentDbModel(step.recipeId) } }
+            },
+            listStepDbModel = listsStep.mapIndexed { index, listsStep ->
+                listsStep.map {
+                    Log.d("IMPL", "$it")
+                    it.toStepDbModel(index)
+                }
             }
         )
     }
+
 
     override suspend fun removeMealPlan(
 //        mealPlan: MealPlan,
@@ -112,8 +138,13 @@ class MealPlanRepositoryImpl @Inject constructor(
 //            mealPlan.toMealPlanDbModel(),
             recipe.toRecipeDbModel(),
             listIngredient.map {
-                it.toIngredientDbModel(recipe.recipeId)
+                it.toRecipeIngredientDbModel(recipe.recipeId)
             }
         )
     }
+
+    override suspend fun deleteMealById(recipeId: Int) {
+        mealPlanDao.deleteMealById(recipeId)
+    }
+
 }

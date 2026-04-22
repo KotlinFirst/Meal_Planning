@@ -1,6 +1,7 @@
 package com.example.mealplanning.data.local.preferences
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -26,6 +27,7 @@ class PreferencesManager @Inject constructor(
         it[BUTTON_STATE_KEY] ?: false
     }
     suspend fun setButtonState(isSelected: Boolean){
+        Log.d("PreferencesManager","$isSelected")
         context.dataStore.edit { it[BUTTON_STATE_KEY] = isSelected }
     }
 
