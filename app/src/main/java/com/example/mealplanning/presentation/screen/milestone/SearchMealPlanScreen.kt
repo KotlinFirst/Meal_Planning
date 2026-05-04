@@ -135,6 +135,7 @@ private fun MealCard(
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
+            Log.d("AsyncImage", mealPlan.imageUri)
             Column(
                 modifier = Modifier
                     .background(

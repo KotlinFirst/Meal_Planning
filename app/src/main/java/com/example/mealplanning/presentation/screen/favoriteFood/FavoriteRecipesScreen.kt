@@ -29,21 +29,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
 import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
-import com.example.mealplanning.presentation.navigation.composable.NavBottomBar
 
 @Composable
 fun FavoriteRecipesScreen(
     modifier: Modifier = Modifier,
     onRecipeClick: (RecipeInformation) -> Unit,
-    viewModel: FavoriteViewModel = hiltViewModel()
-){
+    viewModel: FavoriteViewModel = hiltViewModel(),
+) {
+//    LaunchedEffect(Unit) { viewModel.loadSaveRecipes() }
     Scaffold(
         modifier = modifier.fillMaxSize(),
 //        bottomBar = { NavBottomBar() }
     ) { innerPadding ->
         //val state by viewmodel
+
         val state by viewModel.state.collectAsState()
         LazyColumn(
             modifier = Modifier
@@ -56,8 +56,19 @@ fun FavoriteRecipesScreen(
                 items(
                     items = state.favoriteRecipe,
                     key = { it.recipeId }
-                ) {
-                    MealCard(recipeInformation = it, onRecipeClick = onRecipeClick)
+                ) { recipeInformation ->
+                    MealCard(
+                        recipeInformation = recipeInformation,
+                        onRecipeClick = { onRecipeClick(recipeInformation) },
+                        onLongClick = {
+                            Log.d("onLongClick","Click!")
+                            viewModel.processCommand(
+                                FavoriteViewModel.FavoriteCommand.LongClickCard(
+                                    recipeInformation.recipeId
+                                )
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -69,6 +80,7 @@ private fun MealCard(
     modifier: Modifier = Modifier,
     recipeInformation: RecipeInformation,
     onRecipeClick: (RecipeInformation) -> Unit,
+    onLongClick: (Int) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -78,7 +90,7 @@ private fun MealCard(
                     onRecipeClick(recipeInformation)
                     Log.d("Milestone_Screen", "MealCard_Click")
                 },
-                onLongClick = { onRecipeClick(recipeInformation) }
+                onLongClick = { onLongClick(recipeInformation.recipeId) }
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -88,7 +100,7 @@ private fun MealCard(
                 modifier = Modifier
                     .heightIn(max = 180.dp)
                     .fillMaxWidth(),
-                model = "https://img.spoonacular.com/recipes/${recipeInformation.imageUrl}",
+                model = recipeInformation.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )

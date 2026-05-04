@@ -13,6 +13,6 @@ enum class BottomNavPanel(
     val contentDescription: String,
 ) {
     FAVORITE("favorite","Понравившиеся", Icons.Default.Favorite,"Favorite"),
-    MEAL_PLAN("mealPlan","Планирование",Icons.Default.QueuePlayNext,"Meal Plan"),
+    MEAL_PLAN("search","Планирование",Icons.Default.QueuePlayNext,"Meal Plan"),
     CHART("chart","Графики", Icons.Default.Addchart,"chart")
 }

@@ -16,6 +16,8 @@ import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
 import com.example.mealplanning.domain.entity.planAndRecipe.RecipeInformation
 import com.example.mealplanning.domain.repository.MealPlanRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MealPlanRepositoryImpl @Inject constructor(
@@ -94,8 +96,10 @@ class MealPlanRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllFavoriteRecipe(): List<RecipeInformation> {
-        return mealPlanDao.getAllRecipeWithIngredient().map { it.toEntity() }
+    override fun getAllFavoriteRecipe(): Flow<List<RecipeInformation>> {
+        return mealPlanDao.getAllRecipeWithIngredient().map { list ->
+            list.map { it.toEntity() }
+        }
     }
 
     override suspend fun saveMealPlan(

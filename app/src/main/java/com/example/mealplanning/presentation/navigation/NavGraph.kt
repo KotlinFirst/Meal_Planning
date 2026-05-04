@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mealplanning.presentation.navigation.composable.NavBottomBar
 import com.example.mealplanning.presentation.navigation.composable.currentRoute
+import com.example.mealplanning.presentation.screen.chartScreen.ChartScreen
 import com.example.mealplanning.presentation.screen.favoriteFood.FavoriteRecipesScreen
 import com.example.mealplanning.presentation.screen.instructions.InstructionsScreen
 import com.example.mealplanning.presentation.screen.milestone.SearchMealPlanScreen
@@ -33,8 +34,8 @@ fun NavGraph() {
                     onFavoriteClick = {
                         navController.navigate(BottomNavPanel.FAVORITE.route)
                     },
-                    onChartClick = {},
-                    onMealPlanClick = {}
+                    onChartClick = {navController.navigate(BottomNavPanel.CHART.route)},
+                    onMealPlanClick = {navController.navigate(BottomNavPanel.MEAL_PLAN.route)}
                 )
 
             }
@@ -73,6 +74,9 @@ fun NavGraph() {
                         navController.navigate(NavScreen.RecipeScreen.createRoute(it.recipeId))
                     }
                 )
+            }
+            composable(NavScreen.ChartScreen.route){
+                ChartScreen()
             }
         }
     }

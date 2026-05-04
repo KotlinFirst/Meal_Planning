@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetAllFavoriteRecipesUseCase @Inject constructor(
     private val mealPlanRepository: MealPlanRepository,
 ) {
-    suspend operator fun invoke() = mealPlanRepository.getAllFavoriteRecipe()
+    operator fun invoke() = mealPlanRepository.getAllFavoriteRecipe()
 }

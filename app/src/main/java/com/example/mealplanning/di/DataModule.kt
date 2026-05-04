@@ -78,7 +78,9 @@ fun bindPreferenceRepository(impl: PreferencesRepositoryImpl): PreferencesReposi
                 context = context,
                 klass = AppDatabase::class.java,
                 name = "mealPlanning.db"
-            ).fallbackToDestructiveMigration(dropAllTables = true).build()
+            ).build()
+//                .fallbackToDestructiveMigration(dropAllTables = true).build()
+
         }
 
 //        @Provides

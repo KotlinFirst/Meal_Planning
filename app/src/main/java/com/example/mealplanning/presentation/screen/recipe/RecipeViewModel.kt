@@ -51,6 +51,7 @@ class RecipeViewModel @AssistedInject constructor(
     fun processCommand(command: RecipeInformationCommand) {
         when (command) {
             is RecipeInformationCommand.IsSelectedSaveRecipeButton -> {
+
                 viewModelScope.launch {
                     when (command.isSelected) {
                         true -> {

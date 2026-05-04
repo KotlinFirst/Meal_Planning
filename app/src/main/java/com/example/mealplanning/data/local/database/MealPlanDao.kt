@@ -24,10 +24,8 @@ interface MealPlanDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun addRecipe(recipeDbModel: RecipeDbModel)
-
     @Insert(onConflict = IGNORE)
     suspend fun addIngredientsRecipe(listRecipeIngredientDbModel: List<RecipeIngredientDbModel>)
-
 
     @Insert(onConflict = IGNORE)
     suspend fun addIngredientsInstruction(listInstructionIngredientDbModel: List<InstructionIngredientDbModel>)
@@ -36,9 +34,7 @@ interface MealPlanDao {
     suspend fun addEquipment(listEquipmentDbModel: List<EquipmentDbModel>)
 
     @Insert(onConflict = IGNORE)
-    suspend fun addStep(listStepDbModel: List<StepDbModel>){
-        Log.d("Dao","addStep $listStepDbModel")
-    }
+    suspend fun addStep(listStepDbModel: List<StepDbModel>)
 
     @Transaction
     suspend fun addFullRecipe(
@@ -49,21 +45,22 @@ interface MealPlanDao {
         listEquipmentDbModel: List<List<List<EquipmentDbModel>>>,
         listStepDbModel: List<List<StepDbModel>>,
     ) {
-        Log.d("DAO","recipeDbModel${recipeDbModel.recipeId}")
-        Log.d("DAO","listStepDbModel${listStepDbModel}")
+
+        Log.d("DAO", "listStepDbModel${listStepDbModel}")
 //        addMeal(mealPlanDbModel)
         addRecipe(recipeDbModel)
+        Log.d("DAO", "recipeDbModel $")
         addIngredientsRecipe(listRecipeIngredientDbModel)
         listStepDbModel.forEach {
-            Log.d("DAO","listStepDbModelFOREACH${it}")
-            addStep(it) }
+            Log.d("DAO", "listStepDbModelFOREACH${it}")
+            addStep(it)
+        }
         listsInstructionIngredientDbModel.forEach { listList ->
-            listList.forEach { addIngredientsInstruction(it )}
+            listList.forEach { addIngredientsInstruction(it) }
         }
         listEquipmentDbModel.forEach { listList ->
             listList.forEach { addEquipment(it) }
         }
-
     }
 
     //GET
@@ -85,7 +82,7 @@ interface MealPlanDao {
 
     @Transaction
     @Query("SELECT*FROM recipe")
-    fun getAllRecipeWithIngredient(): List<RecipeWithIngredientDbModel>
+    fun getAllRecipeWithIngredient(): Flow<List<RecipeWithIngredientDbModel>>
 
     @Transaction
     @Query("SELECT*FROM step WHERE recipeId =:recipeId")
@@ -111,9 +108,9 @@ interface MealPlanDao {
         deleteRecipe(recipeDbModel)
         deleteIngredients(listIngredientDbModel)
     }
-@Transaction
-@Query("DELETE FROM recipe WHERE recipeId ==:recipeId")
-suspend fun deleteMealById(recipeId: Int){
-    Log.d("DAO","REMOVE$recipeId")}
+
+    @Transaction
+    @Query("DELETE FROM recipe WHERE recipeId ==:recipeId")
+    suspend fun deleteMealById(recipeId: Int)
 
 }

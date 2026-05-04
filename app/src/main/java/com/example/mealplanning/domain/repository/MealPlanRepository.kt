@@ -18,7 +18,6 @@ interface MealPlanRepository {
         recipe: RecipeInformation,
         listsStep: List<List<Step>>,
     )
-
     suspend fun removeMealPlan(
 //        mealPlan: MealPlan,
         recipe: RecipeInformation,
@@ -28,5 +27,5 @@ interface MealPlanRepository {
 
     suspend fun getInstructions(recipeId: Int): List<List<Step>>
 
-    suspend fun getAllFavoriteRecipe():List<RecipeInformation>
+     fun getAllFavoriteRecipe():Flow<List<RecipeInformation>>
 }

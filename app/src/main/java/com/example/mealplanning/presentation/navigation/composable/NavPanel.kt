@@ -1,5 +1,6 @@
 package com.example.mealplanning.presentation.navigation.composable
 
+import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,32 +24,33 @@ fun NavBottomBar(
 ) {
 //    val startScreen = BottomNavPanel.MEAL_PLAN
 //    val selectedButtonPanel by rememberSaveable { mutableIntStateOf(startScreen.ordinal) }
-    val currentRoute =currentRoute(navController)
-        NavigationBar {
-            BottomNavPanel.entries.forEach{  panel ->
-                NavigationBarItem(
-                    selected = currentRoute == panel.route,
-                    onClick = {
-                        when (panel) {
-                            BottomNavPanel.FAVORITE -> onFavoriteClick()
-                            BottomNavPanel.MEAL_PLAN -> onMealPlanClick()
-                            BottomNavPanel.CHART -> onChartClick()
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = panel.icon,
-                            contentDescription = panel.contentDescription
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = panel.label
-                        )
+    val currentRoute = currentRoute(navController)
+    NavigationBar {
+        BottomNavPanel.entries.forEach { panel ->
+            NavigationBarItem(
+                selected = currentRoute == panel.route,
+                onClick = {
+                    when (panel) {
+                        BottomNavPanel.FAVORITE -> onFavoriteClick()
+                        BottomNavPanel.MEAL_PLAN -> onMealPlanClick()
+                        BottomNavPanel.CHART -> onChartClick()
                     }
-                )
-            }
+                },
+                icon = {
+                    Icon(
+                        imageVector = panel.icon,
+                        contentDescription = panel.contentDescription
+                    )
+                },
+                label = {
+                    Text(
+                        text = panel.label
+                    )
+                }
+            )
         }
+    }
+    Log.d("NavigationBarFinish","$currentRoute")
 }
 
 @Composable

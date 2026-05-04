@@ -16,7 +16,7 @@ import com.example.mealplanning.data.local.database.recipe.RecipeDbModel
         InstructionIngredientDbModel::class,
         EquipmentDbModel::class,
         StepDbModel::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
