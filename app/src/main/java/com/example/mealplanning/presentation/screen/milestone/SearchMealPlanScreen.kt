@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.mealplanning.domain.entity.planAndRecipe.MealPlan
-import com.example.mealplanning.presentation.navigation.composable.NavBottomBar
 
 @Composable
 fun SearchMealPlanScreen(
@@ -58,24 +58,43 @@ fun SearchMealPlanScreen(
                     Log.d("MilestoneScreen", " RecipeTopBar")
                 }
             )
-        }, // обновить список блюд
-//        bottomBar = { NavBottomBar() } //вкладки 1) рецепты на сегодня 2) запланировать рецепты 3) сохраненые рецепты по дням(ROW списки по дням) и с поиском по названию.
+        }
     ) { innerPadding ->
-        //val state by viewmodel
-        val state by viewModel.state.collectAsState()
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            contentPadding = innerPadding,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            if (state.mealPlan.isNotEmpty()) {
-                items(
-                    items = state.mealPlan,
-                    key = { it.imageUri }
+        val state = viewModel.state.collectAsState()
+        val currentState = state.value
+        when (currentState) {
+            SearchMealPlanViewmodel.SearchState.Initial -> {
+                Log.d("SearchMealPlanScreen", "Initial")
+                Box(modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                    contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(48.dp)
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 16.dp)
+                    )
+                }
+            }
+
+            is SearchMealPlanViewmodel.SearchState.Search -> {
+                Log.d("SearchMealPlanScreen", "Search")
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    MealCard(mealPlan = it, onRecipeClick = onRecipeClick)
+                    if (currentState.mealPlan.isNotEmpty()) {
+                        items(
+                            items = currentState.mealPlan,
+                            key = { it.imageUri }
+                        ) {
+                            MealCard(mealPlan = it, onRecipeClick = onRecipeClick)
+                        }
+                    }
                 }
             }
         }

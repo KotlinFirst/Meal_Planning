@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             _root_ide_package_.com.example.mealplanning.presentation.ui.theme.MealPlanningTheme {
 //                RecipeScreen(recipeId = 324694, onButtonClick = {})
+//                Test()
                 NavGraph()
 //                FavoriteRecipesScreen()
 //                InstructionsScreen(recipeId = 324694)
