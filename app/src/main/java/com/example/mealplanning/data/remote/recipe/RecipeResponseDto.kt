@@ -10,7 +10,7 @@ data class RecipeResponseDto(
     @SerialName("cookingMinutes")
     val cookingMinutes: Int = 0,
     @SerialName("extendedIngredients")
-    val extendedIngredients: List<ExtendedIngredient> = listOf(),
+    val extendedIngredients: List<ExtendedIngredientDto> = listOf(),
     @SerialName("id")
     val id: Int = 0,
     @SerialName("image")

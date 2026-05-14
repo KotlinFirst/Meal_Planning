@@ -1,4 +1,6 @@
-package com.example.mealplanning.domain.entity
+package com.example.mealplanning.domain.entity.planAndRecipe
+
+import com.example.mealplanning.domain.entity.Ingredient
 
 data class RecipeInformation (
     val recipeId: Int = 0,

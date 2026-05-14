@@ -6,5 +6,6 @@ import javax.inject.Inject
 class GetRecipeInformationUseCase @Inject constructor(
     private val mealPlanRepository: MealPlanRepository,
 ) {
-    suspend operator fun invoke(recipeId:Int) = mealPlanRepository.getRecipeInformation(recipeId)
+    suspend operator fun invoke(recipeId:Int) =
+        mealPlanRepository.getRecipeInformation(recipeId)
 }
